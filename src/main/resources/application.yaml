@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: delivery-server
+  profiles:
+    active: dev
+  config:
+    import: 'optional:configserver: '
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: config-server
+
+eureka:
+  instance:
+    prefer-ip-address: false
+    hostname: ${HOSTNAME:localhost}
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:3101/eureka/}
