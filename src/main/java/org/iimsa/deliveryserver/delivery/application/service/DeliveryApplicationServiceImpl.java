@@ -1,11 +1,16 @@
 package org.iimsa.deliveryserver.delivery.application.service;
 
 import lombok.RequiredArgsConstructor;
+import org.iimsa.common.exception.NotFoundException;
 import org.iimsa.deliveryserver.delivery.application.dto.command.CreateDeliveryCommand;
+import org.iimsa.deliveryserver.delivery.application.dto.query.FindDeliveryQuery;
+import org.iimsa.deliveryserver.delivery.application.dto.query.ListDeliveryQuery;
 import org.iimsa.deliveryserver.delivery.application.dto.result.DeliveryResult;
 import org.iimsa.deliveryserver.delivery.domain.model.Delivery;
 import org.iimsa.deliveryserver.delivery.domain.model.DeliveryStatus;
 import org.iimsa.deliveryserver.delivery.domain.repository.DeliveryRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,5 +35,18 @@ public class DeliveryApplicationServiceImpl implements DeliveryApplicationServic
                 .build();
 
         return DeliveryResult.from(deliveryRepository.save(delivery));
+    }
+
+    @Override
+    public DeliveryResult findDelivery(FindDeliveryQuery query) {
+        Delivery delivery = deliveryRepository.findActiveById(query.deliveryId())
+                .orElseThrow(() -> new NotFoundException("배송 정보를 찾을 수 없습니다."));
+        return DeliveryResult.from(delivery);
+    }
+
+    @Override
+    public Page<DeliveryResult> listDeliveries(ListDeliveryQuery query) {
+        return deliveryRepository.findAllActive(PageRequest.of(query.page(), query.size()))
+                .map(DeliveryResult::from);
     }
 }
