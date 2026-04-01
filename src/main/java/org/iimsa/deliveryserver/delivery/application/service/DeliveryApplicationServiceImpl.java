@@ -69,5 +69,13 @@ public class DeliveryApplicationServiceImpl implements DeliveryApplicationServic
         return DeliveryResult.from(deliveryRepository.save(delivery));
     }
 
+    @Override
+    @Transactional
+    public DeliveryResult deleteDelivery(UUID deliveryId) {
+        Delivery delivery = deliveryRepository.findActiveById(deliveryId)
+                .orElseThrow(() -> new NotFoundException("배송 정보를 찾을 수 없습니다."));
+        delivery.softDelete(null); // SecurityUtil.getCurrentUsername() 으로 자동 처리 (BaseEntity)
+        return DeliveryResult.from(deliveryRepository.save(delivery));
+    }
 
 }

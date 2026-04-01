@@ -19,4 +19,5 @@ public interface DeliveryApplicationService {
 
     DeliveryResult updateDelivery(UUID deliveryId, UpdateDeliveryCommand command);
 
+    DeliveryResult deleteDelivery(UUID deliveryId);
 }

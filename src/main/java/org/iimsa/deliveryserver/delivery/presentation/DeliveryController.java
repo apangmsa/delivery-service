@@ -64,5 +64,12 @@ public class DeliveryController {
         return CommonResponse.success("배송 정보가 수정되었습니다.", result);
     }
 
-
+    @Operation(summary = "배송 논리 삭제")
+    @DeleteMapping("/{deliveryId}")
+    public CommonResponse<DeliveryResult> deleteDelivery(
+            @PathVariable UUID deliveryId
+    ) {
+        DeliveryResult result = deliveryApplicationService.deleteDelivery(deliveryId);
+        return CommonResponse.success("배송 정보가 삭제되었습니다.", result);
+    }
 }
