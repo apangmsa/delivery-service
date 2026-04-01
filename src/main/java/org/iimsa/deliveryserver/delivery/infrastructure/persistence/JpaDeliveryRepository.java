@@ -13,9 +13,11 @@ import java.util.UUID;
 public interface JpaDeliveryRepository extends JpaRepository<Delivery, UUID>,
         QuerydslPredicateExecutor<Delivery> {
 
+    // 활성 데이터 단건 조회
     @Query("SELECT d FROM Delivery d WHERE d.id = :id AND d.deletedAt IS NULL")
     Optional<Delivery> findActiveById(UUID id);
 
+    // 활성 데이터 목록 조회
     @Query("SELECT d FROM Delivery d WHERE d.deletedAt IS NULL")
     Page<Delivery> findAllActive(Pageable pageable);
 

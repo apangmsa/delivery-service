@@ -10,6 +10,7 @@ import org.iimsa.deliveryserver.delivery.application.dto.query.ListDeliveryQuery
 import org.iimsa.deliveryserver.delivery.application.dto.result.DeliveryResult;
 import org.iimsa.deliveryserver.delivery.application.service.DeliveryApplicationService;
 import org.iimsa.deliveryserver.delivery.presentation.dto.request.CreateDeliveryRequest;
+import org.iimsa.deliveryserver.delivery.presentation.dto.request.UpdateDeliveryRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -52,4 +53,16 @@ public class DeliveryController {
         Page<DeliveryResult> result = deliveryApplicationService.listDeliveries(new ListDeliveryQuery(page, size));
         return CommonResponse.success(result);
     }
+
+    @Operation(summary = "배송 상태 수정")
+    @PatchMapping("/{deliveryId}")
+    public CommonResponse<DeliveryResult> updateDelivery(
+            @PathVariable UUID deliveryId,
+            @RequestBody UpdateDeliveryRequest request
+    ) {
+        DeliveryResult result = deliveryApplicationService.updateDelivery(deliveryId, request.toCommand());
+        return CommonResponse.success("배송 정보가 수정되었습니다.", result);
+    }
+
+
 }
