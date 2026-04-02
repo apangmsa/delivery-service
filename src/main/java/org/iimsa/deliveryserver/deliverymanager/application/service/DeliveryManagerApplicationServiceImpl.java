@@ -14,6 +14,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -49,5 +51,14 @@ public class DeliveryManagerApplicationServiceImpl implements DeliveryManagerApp
     public Page<DeliveryManagerResult> listDeliveryManagers(ListDeliveryManagerQuery query) {
         return deliveryManagerRepository.findAllActive(PageRequest.of(query.page(), query.size()))
                 .map(DeliveryManagerResult::from);
+    }
+
+    @Override
+    @Transactional
+    public DeliveryManagerResult deleteDeliveryManager(UUID deliveryManagerId) {
+        DeliveryManager manager = deliveryManagerRepository.findActiveById(deliveryManagerId)
+                .orElseThrow(() -> new NotFoundException("배송 담당자를 찾을 수 없습니다."));
+        manager.softDelete(null); // SecurityUtil.getCurrentUsername() 으로 자동 처리 (BaseEntity)
+        return DeliveryManagerResult.from(deliveryManagerRepository.save(manager));
     }
 }

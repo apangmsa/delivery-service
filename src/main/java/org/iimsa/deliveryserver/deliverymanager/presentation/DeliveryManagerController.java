@@ -56,4 +56,13 @@ public class DeliveryManagerController {
         );
         return CommonResponse.success(result);
     }
+
+    @Operation(summary = "배송 담당자 논리 삭제")
+    @DeleteMapping("/{deliveryManagerId}")
+    public CommonResponse<DeliveryManagerResult> deleteDeliveryManager(
+            @PathVariable UUID deliveryManagerId
+    ) {
+        DeliveryManagerResult result = deliveryManagerApplicationService.deleteDeliveryManager(deliveryManagerId);
+        return CommonResponse.success("배송 담당자가 삭제되었습니다.", result);
+    }
 }
