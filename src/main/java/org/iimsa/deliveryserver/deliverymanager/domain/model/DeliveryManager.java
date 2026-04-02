@@ -45,6 +45,12 @@ public class DeliveryManager extends BaseEntity {
     // 비즈니스 메서드
     // ──────────────────────────────────────────────
 
+    public void update(UUID hubId, DeliveryManagerType managerType, String slackId) {
+        if (hubId != null) this.hubId = hubId;
+        if (managerType != null) this.managerType = managerType;
+        if (slackId != null) this.slackId = slackId;
+    }
+
     public void softDelete(String deletedBy) {
         super.delete(deletedBy);
     }

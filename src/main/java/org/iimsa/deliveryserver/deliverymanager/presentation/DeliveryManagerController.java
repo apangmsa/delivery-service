@@ -10,6 +10,7 @@ import org.iimsa.deliveryserver.deliverymanager.application.dto.query.ListDelive
 import org.iimsa.deliveryserver.deliverymanager.application.dto.result.DeliveryManagerResult;
 import org.iimsa.deliveryserver.deliverymanager.application.service.DeliveryManagerApplicationService;
 import org.iimsa.deliveryserver.deliverymanager.presentation.dto.request.CreateDeliveryManagerRequest;
+import org.iimsa.deliveryserver.deliverymanager.presentation.dto.request.UpdateDeliveryManagerRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -55,6 +56,18 @@ public class DeliveryManagerController {
                 new ListDeliveryManagerQuery(page, size)
         );
         return CommonResponse.success(result);
+    }
+
+    @Operation(summary = "배송 담당자 수정")
+    @PatchMapping("/{deliveryManagerId}")
+    public CommonResponse<DeliveryManagerResult> updateDeliveryManager(
+            @PathVariable UUID deliveryManagerId,
+            @RequestBody UpdateDeliveryManagerRequest request
+    ) {
+        DeliveryManagerResult result = deliveryManagerApplicationService.updateDeliveryManager(
+                deliveryManagerId, request.toCommand()
+        );
+        return CommonResponse.success("배송 담당자 정보가 수정되었습니다.", result);
     }
 
     @Operation(summary = "배송 담당자 논리 삭제")

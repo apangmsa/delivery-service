@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.iimsa.common.exception.ConflictException;
 import org.iimsa.common.exception.NotFoundException;
 import org.iimsa.deliveryserver.deliverymanager.application.dto.command.CreateDeliveryManagerCommand;
+import org.iimsa.deliveryserver.deliverymanager.application.dto.command.UpdateDeliveryManagerCommand;
 import org.iimsa.deliveryserver.deliverymanager.application.dto.query.FindDeliveryManagerQuery;
 import org.iimsa.deliveryserver.deliverymanager.application.dto.query.ListDeliveryManagerQuery;
 import org.iimsa.deliveryserver.deliverymanager.application.dto.result.DeliveryManagerResult;
@@ -51,6 +52,15 @@ public class DeliveryManagerApplicationServiceImpl implements DeliveryManagerApp
     public Page<DeliveryManagerResult> listDeliveryManagers(ListDeliveryManagerQuery query) {
         return deliveryManagerRepository.findAllActive(PageRequest.of(query.page(), query.size()))
                 .map(DeliveryManagerResult::from);
+    }
+
+    @Override
+    @Transactional
+    public DeliveryManagerResult updateDeliveryManager(UUID deliveryManagerId, UpdateDeliveryManagerCommand command) {
+        DeliveryManager manager = deliveryManagerRepository.findActiveById(deliveryManagerId)
+                .orElseThrow(() -> new NotFoundException("배송 담당자를 찾을 수 없습니다."));
+        manager.update(command.hubId(), command.managerType(), command.slackId());
+        return DeliveryManagerResult.from(deliveryManagerRepository.save(manager));
     }
 
     @Override
