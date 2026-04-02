@@ -3,6 +3,8 @@ package org.iimsa.deliveryserver.deliverymanager.infrastructure.persistence;
 import lombok.RequiredArgsConstructor;
 import org.iimsa.deliveryserver.deliverymanager.domain.model.DeliveryManager;
 import org.iimsa.deliveryserver.deliverymanager.domain.repository.DeliveryManagerRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -22,6 +24,11 @@ public class DeliveryManagerRepositoryImpl implements DeliveryManagerRepository 
     @Override
     public Optional<DeliveryManager> findActiveById(UUID id) {
         return jpaDeliveryManagerRepository.findActiveById(id);
+    }
+
+    @Override
+    public Page<DeliveryManager> findAllActive(Pageable pageable) {
+        return jpaDeliveryManagerRepository.findAllActive(pageable);
     }
 
     @Override

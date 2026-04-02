@@ -5,11 +5,16 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.iimsa.common.response.CommonResponse;
+import org.iimsa.deliveryserver.deliverymanager.application.dto.query.FindDeliveryManagerQuery;
+import org.iimsa.deliveryserver.deliverymanager.application.dto.query.ListDeliveryManagerQuery;
 import org.iimsa.deliveryserver.deliverymanager.application.dto.result.DeliveryManagerResult;
 import org.iimsa.deliveryserver.deliverymanager.application.service.DeliveryManagerApplicationService;
 import org.iimsa.deliveryserver.deliverymanager.presentation.dto.request.CreateDeliveryManagerRequest;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @Tag(name = "DeliveryManager", description = "배송 담당자 관리 API")
 @RestController
@@ -27,5 +32,28 @@ public class DeliveryManagerController {
     ) {
         DeliveryManagerResult result = deliveryManagerApplicationService.createDeliveryManager(request.toCommand());
         return CommonResponse.success("배송 담당자가 등록되었습니다.", result);
+    }
+
+    @Operation(summary = "배송 담당자 단건 조회")
+    @GetMapping("/{deliveryManagerId}")
+    public CommonResponse<DeliveryManagerResult> findDeliveryManager(
+            @PathVariable UUID deliveryManagerId
+    ) {
+        DeliveryManagerResult result = deliveryManagerApplicationService.findDeliveryManager(
+                new FindDeliveryManagerQuery(deliveryManagerId)
+        );
+        return CommonResponse.success(result);
+    }
+
+    @Operation(summary = "배송 담당자 목록 조회")
+    @GetMapping
+    public CommonResponse<Page<DeliveryManagerResult>> listDeliveryManagers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Page<DeliveryManagerResult> result = deliveryManagerApplicationService.listDeliveryManagers(
+                new ListDeliveryManagerQuery(page, size)
+        );
+        return CommonResponse.success(result);
     }
 }
