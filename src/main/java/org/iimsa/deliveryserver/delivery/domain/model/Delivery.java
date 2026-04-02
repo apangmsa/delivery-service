@@ -14,7 +14,10 @@ import java.util.UUID;
 @Getter
 @Builder
 @Access(AccessType.FIELD)
-@Table(name = "p_delivery")
+@Table(
+        name = "p_delivery",
+        uniqueConstraints = @UniqueConstraint(name = "uq_delivery_order_id", columnNames = "order_id")
+)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Delivery extends BaseEntity {

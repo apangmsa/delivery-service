@@ -1,6 +1,7 @@
 package org.iimsa.deliveryserver.delivery.application.service;
 
 import lombok.RequiredArgsConstructor;
+import org.iimsa.common.exception.ConflictException;
 import org.iimsa.common.exception.NotFoundException;
 import org.iimsa.deliveryserver.delivery.application.dto.command.CreateDeliveryCommand;
 import org.iimsa.deliveryserver.delivery.application.dto.command.UpdateDeliveryCommand;
@@ -27,6 +28,10 @@ public class DeliveryApplicationServiceImpl implements DeliveryApplicationServic
     @Override
     @Transactional
     public DeliveryResult createDelivery(CreateDeliveryCommand command) {
+        if (deliveryRepository.existsByOrderId(command.orderId())) {
+            throw new ConflictException("이미 해당 주문에 대한 배송이 존재합니다.");
+        }
+
         Delivery delivery = Delivery.builder()
                 .orderId(command.orderId())
                 .deliveryStatus(DeliveryStatus.HUB_WAITING)
@@ -77,5 +82,4 @@ public class DeliveryApplicationServiceImpl implements DeliveryApplicationServic
         delivery.softDelete(null); // SecurityUtil.getCurrentUsername() 으로 자동 처리 (BaseEntity)
         return DeliveryResult.from(deliveryRepository.save(delivery));
     }
-
 }
