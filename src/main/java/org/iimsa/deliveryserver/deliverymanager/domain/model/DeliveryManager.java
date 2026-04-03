@@ -30,6 +30,9 @@ public class DeliveryManager extends BaseEntity {
     @Column(name = "user_id", length = 36, nullable = false)
     private UUID userId;
 
+    @Column(name = "manager_name", length = 100, nullable = false)
+    private String username;
+
     @JdbcTypeCode(SqlTypes.UUID)
     @Column(length = 36, nullable = false)
     private UUID hubId;
@@ -38,6 +41,7 @@ public class DeliveryManager extends BaseEntity {
     @Column(name = "manager_type", length = 20, nullable = false)
     private DeliveryManagerType managerType;
 
+
     @Column(length = 100)
     private String slackId;
 
@@ -45,7 +49,8 @@ public class DeliveryManager extends BaseEntity {
     // 비즈니스 메서드
     // ──────────────────────────────────────────────
 
-    public void update(UUID hubId, DeliveryManagerType managerType, String slackId) {
+    public void update(String username, UUID hubId, DeliveryManagerType managerType, String slackId) {
+        if (username != null) this.username = username;
         if (hubId != null) this.hubId = hubId;
         if (managerType != null) this.managerType = managerType;
         if (slackId != null) this.slackId = slackId;

@@ -6,6 +6,7 @@ import java.util.UUID;
 
 public record CreateDeliveryManagerCommand(
         UUID userId,
+        String username,
         UUID hubId,
         DeliveryManagerType managerType,
         String slackId

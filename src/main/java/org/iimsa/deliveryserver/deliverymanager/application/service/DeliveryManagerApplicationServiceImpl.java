@@ -33,6 +33,7 @@ public class DeliveryManagerApplicationServiceImpl implements DeliveryManagerApp
 
         DeliveryManager manager = DeliveryManager.builder()
                 .userId(command.userId())
+                .username(command.username())
                 .hubId(command.hubId())
                 .managerType(command.managerType())
                 .slackId(command.slackId())
@@ -59,7 +60,7 @@ public class DeliveryManagerApplicationServiceImpl implements DeliveryManagerApp
     public DeliveryManagerResult updateDeliveryManager(UUID deliveryManagerId, UpdateDeliveryManagerCommand command) {
         DeliveryManager manager = deliveryManagerRepository.findActiveById(deliveryManagerId)
                 .orElseThrow(() -> new NotFoundException("배송 담당자를 찾을 수 없습니다."));
-        manager.update(command.hubId(), command.managerType(), command.slackId());
+        manager.update(command.username(), command.hubId(), command.managerType(), command.slackId());
         return DeliveryManagerResult.from(deliveryManagerRepository.save(manager));
     }
 

@@ -9,6 +9,7 @@ import java.util.UUID;
 public record DeliveryManagerResult(
         UUID id,
         UUID userId,
+        String username,
         UUID hubId,
         DeliveryManagerType managerType,
         String slackId,
@@ -19,6 +20,7 @@ public record DeliveryManagerResult(
         return new DeliveryManagerResult(
                 manager.getId(),
                 manager.getUserId(),
+                manager.getUsername(),
                 manager.getHubId(),
                 manager.getManagerType(),
                 manager.getSlackId(),

@@ -5,6 +5,7 @@ import org.iimsa.deliveryserver.deliverymanager.domain.model.DeliveryManagerType
 import java.util.UUID;
 
 public record UpdateDeliveryManagerCommand(
+        String username,
         UUID hubId,
         DeliveryManagerType managerType,
         String slackId
