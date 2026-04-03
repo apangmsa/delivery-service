@@ -33,6 +33,6 @@ public class DeliveryManagerRepositoryImpl implements DeliveryManagerRepository 
 
     @Override
     public boolean existsByUserId(UUID userId) {
-        return jpaDeliveryManagerRepository.existsByUserIdAndDeletedAtIsNull(userId);
+        return jpaDeliveryManagerRepository.existsByUserId(userId);
     }
 }

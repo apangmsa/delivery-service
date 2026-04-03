@@ -23,5 +23,5 @@ public interface JpaDeliveryManagerRepository extends JpaRepository<DeliveryMana
             """)
     Page<DeliveryManager> findAllActive(Pageable pageable);
 
-    boolean existsByUserIdAndDeletedAtIsNull(UUID userId);
+    boolean existsByUserId(UUID userId);
 }
