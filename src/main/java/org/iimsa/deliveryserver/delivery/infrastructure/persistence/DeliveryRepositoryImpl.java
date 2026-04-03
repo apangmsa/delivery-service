@@ -28,7 +28,7 @@ public class DeliveryRepositoryImpl implements DeliveryRepository {
 
     @Override
     public boolean existsByOrderId(UUID orderId) {
-        return jpaDeliveryRepository.existsByOrderIdAndDeletedAtIsNull(orderId);
+        return jpaDeliveryRepository.existsByOrderId(orderId);
     }
 
     @Override

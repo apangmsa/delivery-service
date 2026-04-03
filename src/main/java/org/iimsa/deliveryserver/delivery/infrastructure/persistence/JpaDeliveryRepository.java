@@ -24,5 +24,5 @@ public interface JpaDeliveryRepository extends JpaRepository<Delivery, UUID>,
                                         """)
     Page<Delivery> findAllActive(Pageable pageable);
 
-    boolean existsByOrderIdAndDeletedAtIsNull(UUID orderId);
+    boolean existsByOrderId(UUID orderId);
 }
