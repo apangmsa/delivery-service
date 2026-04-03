@@ -1,8 +1,9 @@
+server:
+  port: 5130
+
 spring:
   application:
-    name: delivery-server
-  profiles:
-    active: dev
+    name: order-service
   config:
     import: 'optional:configserver: '
   cloud:
@@ -11,10 +12,22 @@ spring:
         enabled: true
         service-id: config-server
 
+  datasource:
+    url: jdbc:postgresql://localhost:5432/apang_db
+    username: apang
+    password: apangpass
+    driver-class-name: org.postgresql.Driver
+  # 임시 jpa 설정 ( 이후 config-server로 부터 받을 예정 )
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
 eureka:
   instance:
     prefer-ip-address: false
     hostname: ${HOSTNAME:localhost}
+
   client:
     register-with-eureka: true
     fetch-registry: true
