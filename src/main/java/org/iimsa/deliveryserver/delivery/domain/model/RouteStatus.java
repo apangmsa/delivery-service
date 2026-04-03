@@ -1,4 +1,4 @@
-package org.iimsa.deliveryserver.delivery.domain;
+package org.iimsa.deliveryserver.delivery.domain.model;
 
 public enum RouteStatus {
     WAITING,  // 대기

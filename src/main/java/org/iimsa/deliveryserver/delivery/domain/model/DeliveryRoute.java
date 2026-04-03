@@ -1,10 +1,10 @@
-package org.iimsa.deliveryserver.delivery.domain;
+package org.iimsa.deliveryserver.delivery.domain.model;
 
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-import org.spartahub.common.domain.BaseUserEntity;
+import org.iimsa.common.domain.BaseEntity;
 
 import java.util.UUID;
 
@@ -18,7 +18,7 @@ import java.util.UUID;
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class DeliveryRoute extends BaseUserEntity {
+public class DeliveryRoute extends BaseEntity {
 
     @Id
     @JdbcTypeCode(SqlTypes.UUID)
