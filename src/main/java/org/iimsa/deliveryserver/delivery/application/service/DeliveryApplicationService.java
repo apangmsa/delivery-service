@@ -1,6 +1,7 @@
 package org.iimsa.deliveryserver.delivery.application.service;
 
 import org.iimsa.deliveryserver.delivery.application.dto.command.CreateDeliveryCommand;
+import org.iimsa.deliveryserver.delivery.application.dto.command.CreateDeliveryFromHubCommand;
 import org.iimsa.deliveryserver.delivery.application.dto.command.UpdateDeliveryCommand;
 import org.iimsa.deliveryserver.delivery.application.dto.query.FindDeliveryQuery;
 import org.iimsa.deliveryserver.delivery.application.dto.query.ListDeliveryQuery;
@@ -12,6 +13,9 @@ import java.util.UUID;
 public interface DeliveryApplicationService {
 
     DeliveryResult createDelivery(CreateDeliveryCommand command);
+
+    /** Hub Service 이벤트 기반 배송 생성 (경로 포함) */
+    DeliveryResult createDeliveryFromHub(CreateDeliveryFromHubCommand command);
 
     DeliveryResult findDelivery(FindDeliveryQuery query);
 
