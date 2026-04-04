@@ -1,4 +1,4 @@
-package org.iimsa.deliveryserver.delivery.messaging.event;
+package org.iimsa.deliveryserver.delivery.domain.event;
 
 import java.util.List;
 import java.util.UUID;

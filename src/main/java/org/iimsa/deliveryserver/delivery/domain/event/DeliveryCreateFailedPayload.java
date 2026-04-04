@@ -1,11 +1,11 @@
-package org.iimsa.deliveryserver.delivery.messaging.event;
+package org.iimsa.deliveryserver.delivery.domain.event;
 
 import java.util.UUID;
 
 /**
  * delivery.create-failed 이벤트 페이로드
- * Hub Service → Delivery Service 에서 배송 생성 실패 시 발행
- * → Order Service / Hub Service 에서 사가 보상 트랜잭션 수행
+ * Delivery Service → Order Service / Hub Service
+ * 배송 생성 실패 시 발행하는 사가 보상 트랜잭션 이벤트
  */
 public record DeliveryCreateFailedPayload(
 

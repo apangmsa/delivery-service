@@ -1,4 +1,4 @@
-package org.iimsa.deliveryserver.delivery.messaging;
+package org.iimsa.deliveryserver.delivery.infrastructure.messaging.consumer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -6,13 +6,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.iimsa.common.event.Events;
 import org.iimsa.common.messaging.annotation.IdempotentConsumer;
+import org.iimsa.deliveryserver.delivery.domain.event.DeliveryCreateFailedPayload;
+import org.iimsa.deliveryserver.delivery.domain.event.HubDeliveryCreateRequestedPayload;
 import org.iimsa.deliveryserver.delivery.domain.model.Delivery;
 import org.iimsa.deliveryserver.delivery.domain.model.DeliveryRoute;
 import org.iimsa.deliveryserver.delivery.domain.model.DeliveryStatus;
 import org.iimsa.deliveryserver.delivery.domain.model.RouteStatus;
 import org.iimsa.deliveryserver.delivery.domain.repository.DeliveryRepository;
-import org.iimsa.deliveryserver.delivery.messaging.event.DeliveryCreateFailedPayload;
-import org.iimsa.deliveryserver.delivery.messaging.event.HubDeliveryCreateRequestedPayload;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
