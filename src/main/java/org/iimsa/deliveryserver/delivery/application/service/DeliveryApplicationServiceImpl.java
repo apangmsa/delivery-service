@@ -35,14 +35,16 @@ public class DeliveryApplicationServiceImpl implements DeliveryApplicationServic
             throw new ConflictException("이미 해당 주문에 대한 배송이 존재합니다.");
         }
 
+        // REST API 직접 생성 시 서버가 UUID 발급
         Delivery delivery = Delivery.builder()
+                .id(UUID.randomUUID())
                 .orderId(command.orderId())
                 .deliveryStatus(DeliveryStatus.HUB_WAITING)
                 .originHubId(command.originHubId())
                 .originHubName(command.originHubName())
                 .destinationHubId(command.destinationHubId())
                 .destinationHubName(command.destinationHubName())
-                .recipient(command.recipient())
+                .receiverName(command.recipient())
                 .build();
 
         return DeliveryResult.from(deliveryRepository.save(delivery));
@@ -55,27 +57,28 @@ public class DeliveryApplicationServiceImpl implements DeliveryApplicationServic
             throw new ConflictException("이미 해당 주문에 대한 배송이 존재합니다.");
         }
 
+        // Hub Service가 미리 생성한 deliveryId 사용
         Delivery delivery = Delivery.builder()
+                .id(command.deliveryId())
                 .orderId(command.orderId())
                 .deliveryStatus(DeliveryStatus.HUB_WAITING)
                 .originHubId(command.originHubId())
                 .originHubName(command.originHubName())
                 .destinationHubId(command.destinationHubId())
                 .destinationHubName(command.destinationHubName())
-                .recipient(command.recipient())
-                .companyDeliveryManagerId(command.companyDeliveryManagerId())
+                .receiverId(command.receiverId())
+                .receiverName(command.receiverName())
                 .build();
 
-        if (command.hubRoutes() != null) {
-            for (CreateDeliveryFromHubCommand.HubRouteCommand routeCommand : command.hubRoutes()) {
+        if (command.routeSegments() != null) {
+            for (CreateDeliveryFromHubCommand.RouteSegmentCommand seg : command.routeSegments()) {
                 DeliveryRoute route = DeliveryRoute.builder()
                         .delivery(delivery)
-                        .sequence(routeCommand.sequence())
-                        .originHubId(routeCommand.fromHubId())
-                        .destinationHubId(routeCommand.toHubId())
-                        .hubDeliveryManagerId(routeCommand.hubDeliveryManagerId())
-                        .estimatedDistance(routeCommand.estimatedDistance())
-                        .estimatedDuration(routeCommand.estimatedDuration())
+                        .sequence(seg.sequence())
+                        .originHubId(seg.fromHubId())
+                        .destinationHubId(seg.toHubId())
+                        .estimatedDuration(seg.estimatedDuration())
+                        .estimatedDistance(seg.estimatedDistance())
                         .routeStatus(RouteStatus.WAITING)
                         .build();
 
@@ -110,7 +113,7 @@ public class DeliveryApplicationServiceImpl implements DeliveryApplicationServic
         }
 
         // TODO: 업체 배송 담당자 배정 (companyDeliveryManagerId)
-        //       user-service에서 Kafka 이벤트로 수신하여 처리!
+        //       user-service에서 Kafka 이벤트로 수신하여 처리
 
         return DeliveryResult.from(deliveryRepository.save(delivery));
     }
@@ -120,7 +123,7 @@ public class DeliveryApplicationServiceImpl implements DeliveryApplicationServic
     public DeliveryResult deleteDelivery(UUID deliveryId) {
         Delivery delivery = deliveryRepository.findActiveById(deliveryId)
                 .orElseThrow(() -> new NotFoundException("배송 정보를 찾을 수 없습니다."));
-        delivery.softDelete(null); // SecurityUtil.getCurrentUsername() 으로 자동 처리 (BaseEntity)
+        delivery.softDelete(null);
         return DeliveryResult.from(deliveryRepository.save(delivery));
     }
 }

@@ -63,29 +63,31 @@ public class HubDeliveryCreateRequestedConsumer {
     // ──────────────────────────────────────────────
 
     private CreateDeliveryFromHubCommand toCommand(HubDeliveryCreateRequestedPayload payload) {
-        List<CreateDeliveryFromHubCommand.HubRouteCommand> routeCommands =
-                payload.hubRoutes() == null ? List.of() :
-                payload.hubRoutes().stream()
-                        .map(r -> new CreateDeliveryFromHubCommand.HubRouteCommand(
-                                r.sequence(),
-                                r.fromHubId(),
-                                r.toHubId(),
-                                r.hubDeliveryManagerId(),
-                                r.estimatedDistance(),
-                                r.estimatedDuration()
-                        ))
-                        .toList();
+        // routePath.segments → RouteSegmentCommand 목록으로 변환
+        List<CreateDeliveryFromHubCommand.RouteSegmentCommand> segments =
+                (payload.routePath() == null || payload.routePath().segments() == null)
+                        ? List.of()
+                        : payload.routePath().segments().stream()
+                                .map(s -> new CreateDeliveryFromHubCommand.RouteSegmentCommand(
+                                        s.sequence(),
+                                        s.fromHubId(),
+                                        s.toHubId(),
+                                        s.estimatedDuration(),
+                                        s.estimatedDistance()
+                                ))
+                                .toList();
 
         return new CreateDeliveryFromHubCommand(
                 payload.correlationId(),
                 payload.orderId(),
-                payload.recipient(),
-                payload.originHubId(),
-                payload.originHubName(),
-                payload.destinationHubId(),
-                payload.destinationHubName(),
-                routeCommands,
-                payload.companyDeliveryManagerId()
+                payload.deliveryId(),           // Hub 제공 deliveryId
+                payload.startHubId(),
+                payload.startHubName(),
+                payload.endHubId(),
+                payload.endHubName(),
+                payload.receiverId(),
+                payload.receiverName(),
+                segments
         );
     }
 

@@ -6,90 +6,82 @@ import java.util.UUID;
 /**
  * hub.delivery.create-requested 이벤트 페이로드
  * Hub Service → Delivery Service
- * 주문 확정 이후 Hub Service가 배송 경로 및 담당자 정보를 조합해 전달
+ *
+ * <p>Hub Service 가 주문 확정 후 최적 경로를 산출하고,
+ * 미리 생성한 {@code deliveryId} 와 함께 배송 생성을 요청합니다.
  */
 public record HubDeliveryCreateRequestedPayload(
 
-        /**
-         * 메시지 추적용 correlationId
-         */
+        /** 메시지 추적용 correlationId */
         String correlationId,
 
-        /**
-         * 주문 ID
-         */
+        /** 주문 ID */
         UUID orderId,
 
-        /**
-         * 수령인 정보
-         */
-        String recipient,
+        /** Hub 서비스가 미리 생성한 배송 ID (Delivery 엔티티 ID로 사용) */
+        UUID deliveryId,
 
-        /**
-         * 출발 허브 ID
-         */
-        UUID originHubId,
+        // ── 상품 정보
+        UUID productId,
+        String productName,
+        Integer productQuantity,
 
-        /**
-         * 출발 허브 명
-         */
-        String originHubName,
+        // ── 공급 업체 (출발지)
+        UUID supplierId,
+        String supplierName,
 
-        /**
-         * 도착 허브 ID
-         */
-        UUID destinationHubId,
+        /** 출발 허브 ID */
+        UUID startHubId,
+        /** 출발 허브명 */
+        String startHubName,
 
-        /**
-         * 도착 허브 명
-         */
-        String destinationHubName,
+        // ── 수령인 (도착지)
+        UUID receiverId,
+        String receiverName,
 
-        /**
-         * 허브 간 경로 목록 (순서대로)
-         */
-        List<HubRouteInfo> hubRoutes,
+        /** 도착 허브 ID */
+        UUID endHubId,
+        /** 도착 허브명 */
+        String endHubName,
 
-        /**
-         * 업체 배송 담당자 ID
-         */
-        UUID companyDeliveryManagerId
+        /** 전체 예상 소요 시간 합산 (분) */
+        Integer totalEstimatedDuration,
+
+        /** 전체 예상 거리 합산 (km) */
+        Double totalEstimatedDistance,
+
+        /** 허브 간 최적 경로 전체 */
+        RoutePathData routePath,
+
+        /** 주문 요청 사항 */
+        String requestDetails
+
 ) {
 
     /**
-     * 허브 간 단일 경로 정보
+     * 허브 간 전체 최적 경로 데이터
+     * HubRoute 서비스의 HubRoutePath 를 Kafka 메시지로 직렬화한 구조
      */
-    public record HubRouteInfo(
+    public record RoutePathData(
+            UUID originHubId,
+            UUID destinationHubId,
+            int totalDuration,
+            double totalDistance,
+            List<SegmentData> segments
+    ) {
+    }
 
-            /**
-             * 경로 순서 (1부터 시작)
-             */
+    /**
+     * 단일 허브 구간 정보
+     */
+    public record SegmentData(
             int sequence,
-
-            /**
-             * 출발 허브 ID
-             */
             UUID fromHubId,
-
-            /**
-             * 도착 허브 ID
-             */
+            String fromHubName,
             UUID toHubId,
-
-            /**
-             * 해당 구간 담당 허브 배송 담당자 ID
-             */
-            UUID hubDeliveryManagerId,
-
-            /**
-             * 예상 거리 (km)
-             */
-            Double estimatedDistance,
-
-            /**
-             * 예상 소요 시간 (분)
-             */
-            Integer estimatedDuration
+            String toHubName,
+            Integer estimatedDuration,
+            Double estimatedDistance
     ) {
     }
 }

@@ -16,7 +16,8 @@ public record DeliveryResult(
         String originHubName,
         UUID destinationHubId,
         String destinationHubName,
-        String recipient,
+        UUID receiverId,
+        String receiverName,
         UUID companyDeliveryManagerId,
         List<DeliveryRouteResult> deliveryRoutes
 ) {
@@ -29,7 +30,8 @@ public record DeliveryResult(
                 delivery.getOriginHubName(),
                 delivery.getDestinationHubId(),
                 delivery.getDestinationHubName(),
-                delivery.getRecipient(),
+                delivery.getReceiverId(),
+                delivery.getReceiverName(),
                 delivery.getCompanyDeliveryManagerId(),
                 delivery.getDeliveryRoutes().stream()
                         .map(DeliveryRouteResult::from)

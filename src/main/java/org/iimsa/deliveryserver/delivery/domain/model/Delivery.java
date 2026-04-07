@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+// GenerationType import 불필요 — @GeneratedValue 미사용
+
 @Entity
 @Getter
 @Builder
@@ -25,8 +27,7 @@ public class Delivery extends BaseEntity {
     @Id
     @JdbcTypeCode(SqlTypes.UUID)
     @Column(length = 36)
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    private UUID id;  // Hub Service 제공 deliveryId 사용 — @GeneratedValue 미사용
 
     @JdbcTypeCode(SqlTypes.UUID)
     @Column(length = 36, nullable = false)
@@ -50,8 +51,13 @@ public class Delivery extends BaseEntity {
     @Column(length = 50)
     private String destinationHubName;
 
-    @Column(length = 50)
-    private String recipient;
+    // ── 수령인 정보 (receiverId: User 서비스 ID, receiverName: 이름)
+    @JdbcTypeCode(SqlTypes.UUID)
+    @Column(length = 36)
+    private UUID receiverId;
+
+    @Column(length = 100)
+    private String receiverName;
 
     @JdbcTypeCode(SqlTypes.UUID)
     @Column(length = 36)
