@@ -1,10 +1,10 @@
-package org.iimsa.deliveryserver.delivery.domain;
+package org.iimsa.deliveryserver.delivery.domain.model;
 
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-import org.spartahub.common.domain.BaseUserEntity;
+import org.iimsa.common.domain.BaseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +14,13 @@ import java.util.UUID;
 @Getter
 @Builder
 @Access(AccessType.FIELD)
-@Table(name = "p_delivery")
+@Table(
+        name = "p_delivery",
+        uniqueConstraints = @UniqueConstraint(name = "uq_delivery_order_id", columnNames = "order_id")
+)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Delivery extends BaseUserEntity {
+public class Delivery extends BaseEntity {
 
     @Id
     @JdbcTypeCode(SqlTypes.UUID)

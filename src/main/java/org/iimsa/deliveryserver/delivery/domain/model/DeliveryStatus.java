@@ -1,4 +1,4 @@
-package org.iimsa.deliveryserver.delivery.domain;
+package org.iimsa.deliveryserver.delivery.domain.model;
 
 public enum DeliveryStatus {
     HUB_WAITING,       // 허브 대기

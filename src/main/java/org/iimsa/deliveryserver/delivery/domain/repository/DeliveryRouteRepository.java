@@ -1,5 +1,6 @@
-package org.iimsa.deliveryserver.delivery.domain;
+package org.iimsa.deliveryserver.delivery.domain.repository;
 
+import org.iimsa.deliveryserver.delivery.domain.model.DeliveryRoute;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
