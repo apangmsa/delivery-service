@@ -55,6 +55,20 @@ dependencies {
 	testAnnotationProcessor 'org.projectlombok:lombok'
 
 	testRuntimeOnly 'com.h2database:h2'
-
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+// QueryDSL Q클래스 생성 경로 설정
+def querydslDir = layout.buildDirectory.dir("querydsl").get().asFile
+
+sourceSets {
+	main.java.srcDirs += [querydslDir]
+}
+
+tasks.withType(JavaCompile) {
+	options.getGeneratedSourceOutputDirectory().set(file(querydslDir))
+}
+
+clean.doLast {
+	file(querydslDir).deleteDir()
 }
