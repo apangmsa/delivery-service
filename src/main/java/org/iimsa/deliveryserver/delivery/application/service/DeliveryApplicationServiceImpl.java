@@ -1,6 +1,8 @@
 package org.iimsa.deliveryserver.delivery.application.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.iimsa.common.event.Events;
 import org.iimsa.common.exception.ConflictException;
 import org.iimsa.common.exception.NotFoundException;
 import org.iimsa.deliveryserver.delivery.application.dto.command.CreateDeliveryFromHubCommand;
@@ -8,24 +10,31 @@ import org.iimsa.deliveryserver.delivery.application.dto.command.UpdateDeliveryC
 import org.iimsa.deliveryserver.delivery.application.dto.query.FindDeliveryQuery;
 import org.iimsa.deliveryserver.delivery.application.dto.query.ListDeliveryQuery;
 import org.iimsa.deliveryserver.delivery.application.dto.result.DeliveryResult;
+import org.iimsa.deliveryserver.delivery.domain.event.DeliveryStatusChangedPayload;
 import org.iimsa.deliveryserver.delivery.domain.model.Delivery;
 import org.iimsa.deliveryserver.delivery.domain.model.DeliveryRoute;
 import org.iimsa.deliveryserver.delivery.domain.model.DeliveryStatus;
 import org.iimsa.deliveryserver.delivery.domain.model.RouteStatus;
 import org.iimsa.deliveryserver.delivery.domain.repository.DeliveryRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class DeliveryApplicationServiceImpl implements DeliveryApplicationService {
 
     private final DeliveryRepository deliveryRepository;
+
+    @Value("${kafka.topics.delivery-status-changed:delivery.status-changed}")
+    private String deliveryStatusChangedTopic;
 
     @Override
     @Transactional
@@ -85,14 +94,19 @@ public class DeliveryApplicationServiceImpl implements DeliveryApplicationServic
         Delivery delivery = deliveryRepository.findActiveById(deliveryId)
                 .orElseThrow(() -> new NotFoundException("배송 정보를 찾을 수 없습니다."));
 
+        DeliveryStatus previousStatus = delivery.getDeliveryStatus();
+
         if (command.deliveryStatus() != null) {
             delivery.updateStatus(command.deliveryStatus());
         }
+        DeliveryResult result = DeliveryResult.from(deliveryRepository.save(delivery));
 
-        // TODO: 업체 배송 담당자 배정 (companyDeliveryManagerId)
-        //       user-service에서 Kafka 이벤트로 수신하여 처리
+        // 상태가 실제로 변경된 경우에만 ai-service 로 이벤트 발행
+        if (command.deliveryStatus() != null && !command.deliveryStatus().equals(previousStatus)) {
+            publishStatusChangedEvent(delivery, previousStatus);
+        }
 
-        return DeliveryResult.from(deliveryRepository.save(delivery));
+        return result;
     }
 
     @Override
@@ -102,5 +116,35 @@ public class DeliveryApplicationServiceImpl implements DeliveryApplicationServic
                 .orElseThrow(() -> new NotFoundException("배송 정보를 찾을 수 없습니다."));
         delivery.softDelete(null);
         return DeliveryResult.from(deliveryRepository.save(delivery));
+    }
+
+    // ──────────────────────────────────────────────
+    // private helpers
+    // ──────────────────────────────────────────────
+
+    /**
+     * 배송 상태 변경 이벤트 발행 → ai-service (Outbox 패턴)
+     *
+     * <p>토픽: {@code delivery.status-changed} (application.yml {@code kafka.topics.delivery-status-changed})
+     */
+    private void publishStatusChangedEvent(Delivery delivery, DeliveryStatus previousStatus) {
+        String correlationId = UUID.randomUUID().toString();
+
+        Events.trigger(
+                correlationId,
+                "DELIVERY",
+                delivery.getId().toString(),
+                deliveryStatusChangedTopic,
+                new DeliveryStatusChangedPayload(
+                        delivery.getId(),
+                        delivery.getOrderId(),
+                        previousStatus,
+                        delivery.getDeliveryStatus(),
+                        LocalDateTime.now()
+                )
+        );
+
+        log.info("[delivery.status-changed] 이벤트 발행 - deliveryId={}, {} → {}",
+                delivery.getId(), previousStatus, delivery.getDeliveryStatus());
     }
 }

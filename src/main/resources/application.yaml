@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: order-service
+    name: delivery-service
   config:
     import: 'optional:configserver: '
   cloud:
@@ -33,3 +33,10 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: ${EUREKA_SERVER_URL:http://localhost:3101/eureka/}
+
+kafka:
+  topics:
+    # 소비 토픽
+    hub-delivery-create-requested: hub.delivery.create-requested
+    # 발행 토픽
+    delivery-status-changed: delivery.status-changed
