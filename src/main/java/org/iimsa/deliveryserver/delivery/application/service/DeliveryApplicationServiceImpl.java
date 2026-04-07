@@ -3,7 +3,6 @@ package org.iimsa.deliveryserver.delivery.application.service;
 import lombok.RequiredArgsConstructor;
 import org.iimsa.common.exception.ConflictException;
 import org.iimsa.common.exception.NotFoundException;
-import org.iimsa.deliveryserver.delivery.application.dto.command.CreateDeliveryCommand;
 import org.iimsa.deliveryserver.delivery.application.dto.command.CreateDeliveryFromHubCommand;
 import org.iimsa.deliveryserver.delivery.application.dto.command.UpdateDeliveryCommand;
 import org.iimsa.deliveryserver.delivery.application.dto.query.FindDeliveryQuery;
@@ -27,28 +26,6 @@ import java.util.UUID;
 public class DeliveryApplicationServiceImpl implements DeliveryApplicationService {
 
     private final DeliveryRepository deliveryRepository;
-
-    @Override
-    @Transactional
-    public DeliveryResult createDelivery(CreateDeliveryCommand command) {
-        if (deliveryRepository.existsByOrderId(command.orderId())) {
-            throw new ConflictException("이미 해당 주문에 대한 배송이 존재합니다.");
-        }
-
-        // REST API 직접 생성 시 서버가 UUID 발급
-        Delivery delivery = Delivery.builder()
-                .id(UUID.randomUUID())
-                .orderId(command.orderId())
-                .deliveryStatus(DeliveryStatus.HUB_WAITING)
-                .originHubId(command.originHubId())
-                .originHubName(command.originHubName())
-                .destinationHubId(command.destinationHubId())
-                .destinationHubName(command.destinationHubName())
-                .receiverName(command.recipient())
-                .build();
-
-        return DeliveryResult.from(deliveryRepository.save(delivery));
-    }
 
     @Override
     @Transactional

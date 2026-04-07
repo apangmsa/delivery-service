@@ -2,17 +2,14 @@ package org.iimsa.deliveryserver.delivery.presentation;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.iimsa.common.response.CommonResponse;
 import org.iimsa.deliveryserver.delivery.application.dto.query.FindDeliveryQuery;
 import org.iimsa.deliveryserver.delivery.application.dto.query.ListDeliveryQuery;
 import org.iimsa.deliveryserver.delivery.application.dto.result.DeliveryResult;
 import org.iimsa.deliveryserver.delivery.application.service.DeliveryApplicationService;
-import org.iimsa.deliveryserver.delivery.presentation.dto.request.CreateDeliveryRequest;
 import org.iimsa.deliveryserver.delivery.presentation.dto.request.UpdateDeliveryRequest;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -24,16 +21,6 @@ import java.util.UUID;
 public class DeliveryController {
 
     private final DeliveryApplicationService deliveryApplicationService;
-
-    @Operation(summary = "배송 생성")
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public CommonResponse<DeliveryResult> createDelivery(
-            @Valid @RequestBody CreateDeliveryRequest request
-    ) {
-        DeliveryResult result = deliveryApplicationService.createDelivery(request.toCommand());
-        return CommonResponse.success("배송이 생성되었습니다.", result);
-    }
 
     @Operation(summary = "배송 단건 조회")
     @GetMapping("/{deliveryId}")
